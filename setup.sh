@@ -99,6 +99,22 @@ install_pyenv() {
   fi
 }
 
+# Function to install Neovim
+install_neovim() {
+  echo "Do you want to install Neovim? (y/n)"
+  read -r response
+  if [ "$response" = "y" ]; then
+    echo "Installing Neovim..."
+    if [ "$(uname)" = "Linux" ]; then
+      sudo apt install -y neovim
+    elif [ "$(uname)" = "Darwin" ]; then
+      brew install neovim
+    fi
+  else
+    echo "Skipping Neovim installation."
+  fi
+}
+
 # Prompt to install Homebrew
 install_homebrew
 
@@ -110,5 +126,6 @@ setup_local_config
 install_fish
 install_omf
 install_pyenv
+install_neovim
 
 echo "Setup complete! Make sure to set Fish as your default shell if desired."
