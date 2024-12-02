@@ -2,6 +2,8 @@
 
 set -e  # Exit immediately if a command exits with a non-zero status.
 
+sudo apt install -y build-essential
+
 # Function to install Homebrew
 install_homebrew() {
   echo "Do you want to install Homebrew? (yes/no)"
