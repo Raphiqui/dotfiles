@@ -25,62 +25,78 @@ install_homebrew() {
 
 # Function to install chezmoi
 install_chezmoi() {
-  echo "Installing chezmoi..."
-  if ! command -v brew > /dev/null; then
-    echo "Homebrew is not installed. Please install Homebrew first."
-    exit 1
+  echo "Do you want to install chezmoi? (y/n)"
+  read -r response
+  if [ "$response" = "y" ]; then
+    echo "Installing chezmoi..."
+    brew install chezmoi
+  else
+    echo "Skipping chezmoi installation."
   fi
-  brew install chezmoi
 }
 
 # Function to set up local configuration with chezmoi
 setup_local_config() {
-  echo "Please enter your GitHub username:"
-  read GITHUB_USERNAME
-  if [ -z "$GITHUB_USERNAME" ]; then
-    echo "GitHub username cannot be empty. Exiting."
-    exit 1
+  echo "Do you want to set up local configuration with chezmoi? (y/n)"
+  read -r response
+  if [ "$response" = "y" ]; then
+    echo "Please enter your GitHub username:"
+    read -r GITHUB_USERNAME
+    if [ -z "$GITHUB_USERNAME" ]; then
+      echo "GitHub username cannot be empty. Exiting."
+      exit 1
+    fi
+    chezmoi init --apply git@github.com:"$GITHUB_USERNAME"/dotfiles.git
+  else
+    echo "Skipping local configuration setup."
   fi
-  chezmoi init --apply git@github.com:$GITHUB_USERNAME/dotfiles.git
 }
 
 # Function to install Fish Shell
 install_fish() {
-  echo "Installing Fish Shell..."
-  if [ "$(uname)" = "Linux" ]; then
-    sudo apt-add-repository ppa:fish-shell/release-3 -y
-    sudo apt update
-    sudo apt install -y fish
-  elif [ "$(uname)" = "Darwin" ]; then
-    brew install fish
+  echo "Do you want to install Fish Shell? (y/n)"
+  read -r response
+  if [ "$response" = "y" ]; then
+    echo "Installing Fish Shell..."
+    if [ "$(uname)" = "Linux" ]; then
+      sudo apt-add-repository ppa:fish-shell/release-3 -y
+      sudo apt update
+      sudo apt install -y fish
+    elif [ "$(uname)" = "Darwin" ]; then
+      brew install fish
+    fi
+  else
+    echo "Skipping Fish Shell installation."
   fi
 }
 
 # Function to install Oh My Fish (OMF)
 install_omf() {
-  echo "Installing Oh My Fish (OMF)..."
-  curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
-}
-
-# Function to install act
-install_act() {
-  echo "Installing Act..."
-  if [ "$(uname)" = "Linux" ]; then
-    curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
-  elif [ "$(uname)" = "Darwin" ]; then
-    brew install act
+  echo "Do you want to install Oh My Fish (OMF)? (y/n)"
+  read -r response
+  if [ "$response" = "y" ]; then
+    echo "Installing Oh My Fish (OMF)..."
+    curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
+  else
+    echo "Skipping Oh My Fish (OMF) installation."
   fi
 }
 
 # Function to install pyenv
 install_pyenv() {
-  echo "Installing pyenv..."
-  curl https://pyenv.run | bash
-  echo 'set -x PYENV_ROOT $HOME/.pyenv' >> ~/.config/fish/config.fish
-  echo 'set -x PATH $PYENV_ROOT/bin $PATH' >> ~/.config/fish/config.fish
-  echo 'status --is-interactive; and pyenv init --path | source' >> ~/.config/fish/config.fish
-  echo 'status --is-interactive; and pyenv init - | source' >> ~/.config/fish/config.fish
-  echo 'status --is-interactive; and pyenv virtualenv-init - | source' >> ~/.config/fish/config.fish
+  echo "Do you want to install pyenv? (y/n)"
+  read -r response
+  if [ "$response" = "y" ]; then
+    echo "Installing pyenv..."
+    curl https://pyenv.run | bash
+    echo 'set -x PYENV_ROOT $HOME/.pyenv' >> ~/.config/fish/config.fish
+    echo 'set -x PATH $PYENV_ROOT/bin $PATH' >> ~/.config/fish/config.fish
+    echo 'status --is-interactive; and pyenv init --path | source' >> ~/.config/fish/config.fish
+    echo 'status --is-interactive; and pyenv init - | source' >> ~/.config/fish/config.fish
+    echo 'status --is-interactive; and pyenv virtualenv-init - | source' >> ~/.config/fish/config.fish
+  else
+    echo "Skipping pyenv installation."
+  fi
 }
 
 # Prompt to install Homebrew
@@ -93,7 +109,6 @@ setup_local_config
 # Install remaining dependencies
 install_fish
 install_omf
-install_act
 install_pyenv
 
 echo "Setup complete! Make sure to set Fish as your default shell if desired."
