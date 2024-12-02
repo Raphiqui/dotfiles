@@ -72,6 +72,17 @@ install_act() {
   fi
 }
 
+# Function to install pyenv
+install_pyenv() {
+  echo "Installing pyenv..."
+  curl https://pyenv.run | bash
+  echo 'set -x PYENV_ROOT $HOME/.pyenv' >> ~/.config/fish/config.fish
+  echo 'set -x PATH $PYENV_ROOT/bin $PATH' >> ~/.config/fish/config.fish
+  echo 'status --is-interactive; and pyenv init --path | source' >> ~/.config/fish/config.fish
+  echo 'status --is-interactive; and pyenv init - | source' >> ~/.config/fish/config.fish
+  echo 'status --is-interactive; and pyenv virtualenv-init - | source' >> ~/.config/fish/config.fish
+}
+
 # Prompt to install Homebrew
 install_homebrew
 
@@ -83,5 +94,6 @@ setup_local_config
 install_fish
 install_omf
 install_act
+install_pyenv
 
 echo "Setup complete! Make sure to set Fish as your default shell if desired."
