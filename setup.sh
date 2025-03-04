@@ -127,9 +127,9 @@ install_chezmoi
 setup_local_config
 
 # Install remaining dependencies
+install_pyenv # pyenv comes first because fish and omf are configured with it
 install_fish
 install_omf
-install_pyenv
 install_neovim
 
 echo "Setup complete! Make sure to set Fish as your default shell if desired."
