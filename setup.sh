@@ -2,6 +2,7 @@
 
 set -e  # Exit immediately if a command exits with a non-zero status.
 
+sudo apt-get update
 sudo apt install -y build-essential
 
 # Function to install Homebrew
