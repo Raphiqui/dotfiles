@@ -100,12 +100,12 @@ install_fish() {
 
 # Function to install Oh My Fish (OMF)
 install_omf() {
-  echo "Do you want to install Oh My Fish (OMF)? (y/n)"
   if [ "$AUTO_ACCEPT" = "yes" ]; then
-    response="y"
-  else
-    read -r response
+    echo "Skipping GitHub setup in CI/CD environment."
+    return
   fi
+  echo "Do you want to install Oh My Fish (OMF)? (y/n)"
+  read -r response
   if [ "$response" = "y" ]; then
     echo "Installing Oh My Fish (OMF)..."
     curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish -l --private --noninteractive
