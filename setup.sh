@@ -108,7 +108,7 @@ install_omf() {
   fi
   if [ "$response" = "y" ]; then
     echo "Installing Oh My Fish (OMF)..."
-    curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
+    curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish -l --private --noninteractive
   else
     echo "Skipping Oh My Fish (OMF) installation."
   fi
