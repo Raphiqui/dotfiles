@@ -25,7 +25,6 @@ jobs:
       - name: Verify installations
         run: |
           echo "Checking installed dependencies..."
-          which brew && brew --version
-          which chezmoi && chezmoi --version
-          which fish && fish --version
-          which neovim && nvim --version
+          brew --version
+          fish --version
+          nvim --version
