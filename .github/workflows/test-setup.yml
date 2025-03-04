@@ -1,0 +1,32 @@
+name: Test Setup Script
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test-setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Make script executable
+        run: chmod +x setup.sh
+
+      - name: Run setup script in CI mode
+        env:
+          CI: true
+        run: ./setup.sh
+
+      - name: Verify installations
+        run: |
+          echo "Checking installed dependencies..."
+          which brew && brew --version
+          which chezmoi && chezmoi --version
+          which fish && fish --version
+          which act && act --version
+          which neovim && nvim --version
