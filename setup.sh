@@ -125,6 +125,10 @@ install_pyenv() {
   if [ "$response" = "y" ]; then
     echo "Installing pyenv..."
     curl https://pyenv.run | bash
+
+    # Ensure Fish configuration directory exists before writing to config.fish
+    mkdir -p "$HOME/.config/fish"
+    
     echo 'set -x PYENV_ROOT $HOME/.pyenv' >> ~/.config/fish/config.fish
     echo 'set -x PATH $PYENV_ROOT/bin $PATH' >> ~/.config/fish/config.fish
     echo 'status --is-interactive; and pyenv init --path | source' >> ~/.config/fish/config.fish
