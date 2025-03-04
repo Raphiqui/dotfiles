@@ -5,10 +5,22 @@ set -e  # Exit immediately if a command exits with a non-zero status.
 sudo apt-get update
 sudo apt install -y build-essential
 
+# Detect if running in CI/CD (GitHub Actions sets this environment variable)
+if [ -n "$CI" ]; then
+  echo "Running in CI/CD mode: Auto-accepting all prompts and skipping GitHub linking."
+  AUTO_ACCEPT="yes"
+else
+  AUTO_ACCEPT="no"
+fi
+
 # Function to install Homebrew
 install_homebrew() {
   echo "Do you want to install Homebrew? (yes/no)"
-  read answer
+  if [ "$AUTO_ACCEPT" = "yes" ]; then
+    answer="yes"
+  else
+    read answer
+  fi
   case $answer in
     yes)
       echo "Installing Homebrew..."
@@ -30,7 +42,11 @@ install_homebrew() {
 # Function to install chezmoi
 install_chezmoi() {
   echo "Do you want to install chezmoi? (y/n)"
-  read -r response
+  if [ "$AUTO_ACCEPT" = "yes" ]; then
+    response="y"
+  else
+    read -r response
+  fi
   if [ "$response" = "y" ]; then
     echo "Installing chezmoi..."
     brew install chezmoi
@@ -41,6 +57,10 @@ install_chezmoi() {
 
 # Function to set up local configuration with chezmoi
 setup_local_config() {
+  if [ "$AUTO_ACCEPT" = "yes" ]; then
+    echo "Skipping GitHub setup in CI/CD environment."
+    return
+  fi
   echo "Do you want to set up local configuration with chezmoi? (y/n)"
   read -r response
   if [ "$response" = "y" ]; then
@@ -59,7 +79,11 @@ setup_local_config() {
 # Function to install Fish Shell
 install_fish() {
   echo "Do you want to install Fish Shell? (y/n)"
-  read -r response
+  if [ "$AUTO_ACCEPT" = "yes" ]; then
+    response="y"
+  else
+    read -r response
+  fi
   if [ "$response" = "y" ]; then
     echo "Installing Fish Shell..."
     if [ "$(uname)" = "Linux" ]; then
@@ -77,7 +101,11 @@ install_fish() {
 # Function to install Oh My Fish (OMF)
 install_omf() {
   echo "Do you want to install Oh My Fish (OMF)? (y/n)"
-  read -r response
+  if [ "$AUTO_ACCEPT" = "yes" ]; then
+    response="y"
+  else
+    read -r response
+  fi
   if [ "$response" = "y" ]; then
     echo "Installing Oh My Fish (OMF)..."
     curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
@@ -89,7 +117,11 @@ install_omf() {
 # Function to install pyenv
 install_pyenv() {
   echo "Do you want to install pyenv? (y/n)"
-  read -r response
+  if [ "$AUTO_ACCEPT" = "yes" ]; then
+    response="y"
+  else
+    read -r response
+  fi
   if [ "$response" = "y" ]; then
     echo "Installing pyenv..."
     curl https://pyenv.run | bash
@@ -106,7 +138,11 @@ install_pyenv() {
 # Function to install Neovim
 install_neovim() {
   echo "Do you want to install Neovim? (y/n)"
-  read -r response
+  if [ "$AUTO_ACCEPT" = "yes" ]; then
+    response="y"
+  else
+    read -r response
+  fi
   if [ "$response" = "y" ]; then
     echo "Installing Neovim..."
     if [ "$(uname)" = "Linux" ]; then
