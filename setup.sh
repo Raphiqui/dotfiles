@@ -16,6 +16,7 @@ install_homebrew() {
       echo >> /home/norsse/.bashrc
       echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/norsse/.bashrc
       eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+      source "$HOME/.bashrc"
       ;;
     no)
       echo "Skipping Homebrew installation."
