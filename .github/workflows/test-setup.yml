@@ -28,5 +28,4 @@ jobs:
           which brew && brew --version
           which chezmoi && chezmoi --version
           which fish && fish --version
-          which act && act --version
           which neovim && nvim --version
