@@ -108,7 +108,7 @@ install_omf() {
   fi
   if [ "$response" = "y" ]; then
     echo "Installing Oh My Fish (OMF)..."
-    curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish -l
+    curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
   else
     echo "Skipping Oh My Fish (OMF) installation."
   fi
@@ -169,7 +169,7 @@ setup_local_config
 # Install remaining dependencies
 install_fish
 install_pyenv # pyenv comes first because fish and omf are configured with it
-install_omf
 install_neovim
+install_omf # keep this one at the end because otherwise will stop the script execution
 
 echo "Setup complete! Make sure to set Fish as your default shell if desired."
