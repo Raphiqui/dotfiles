@@ -159,7 +159,7 @@ install_neovim() {
   fi
 }
 
-install_minikube {
+install_minikube() {
   echo "Do you want to install minikube? (y/n)"
   if [ "$AUTO_ACCEPT" = "yes" ]; then
     response="y"
