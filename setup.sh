@@ -159,6 +159,22 @@ install_neovim() {
   fi
 }
 
+install_minikube {
+  echo "Do you want to install minikube? (y/n)"
+  if [ "$AUTO_ACCEPT" = "yes" ]; then
+    response="y"
+  else
+    read -r response
+  fi
+  if [ "$response" = "y" ]; then
+    echo "Installing minikube..."
+    curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
+    sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64    
+  else
+    echo "Skipping minikube installation."
+  fi 
+}
+
 # Prompt to install Homebrew
 install_homebrew
 
@@ -171,5 +187,7 @@ install_fish
 install_pyenv # pyenv comes first because fish and omf are configured with it
 install_neovim
 install_omf # keep this one at the end because otherwise will stop the script execution
+
+install_minikube
 
 echo "Setup complete! Make sure to set Fish as your default shell if desired."
