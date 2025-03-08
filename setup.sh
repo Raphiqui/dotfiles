@@ -13,6 +13,27 @@ else
   AUTO_ACCEPT="no"
 fi
 
+configure_git() {
+  # Basically to avoid avoing issues when pushing for the first time from a fresh install
+  echo "Do you want to configure git? (y/n)"
+  if [ "$AUTO_ACCEPT" = "yes" ]; then
+    echo "Skipping GitHub setup in CI/CD environment."
+    return
+  fi
+  read answer
+  if [ "$answer" = "y" ]; then
+    echo "Configuring git..."
+    echo "Enter your email"
+    read email
+    git config --global user.email "$email"
+    echo "Enter your name"
+    read name
+    git config --global user.name "$name"
+  else
+    echo "Skipping git configuration."
+  fi
+}
+
 # Function to install Homebrew
 install_homebrew() {
   echo "Do you want to install Homebrew? (yes/no)"
@@ -178,6 +199,7 @@ install_minikube() {
 # Prompt to install Homebrew
 install_homebrew
 
+configure_git
 # Install chezmoi and set up local configuration
 install_chezmoi
 setup_local_config
