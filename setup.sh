@@ -176,6 +176,8 @@ install_neovim() {
     tar -xzvf /tmp/nvim-nightly.tar.gz -C ~/.local
     mv ~/.local/nvim-linux-x86_64 ~/.local/nvim
 
+    export PATH="$HOME/.local/nvim/bin:$PATH"
+
     echo 'set -x PATH $HOME/.local/nvim/bin $PATH' >>~/.config/fish/config.fish
     echo 'export PATH="$HOME/.local/nvim/bin:$PATH"' >>~/.bashrc
 
