@@ -173,7 +173,7 @@ install_neovim() {
     mkdir -p ~/.local
     curl -L https://github.com/neovim/neovim/releases/download/nightly/nvim-linux-x86_64.tar.gz -o /tmp/nvim-nightly.tar.gz
 
-    tar -xzvf nvim-linux-x86_64.tar.gz -C ~/.local
+    tar -xzvf /tmp/nvim-nightly.tar.gz -C ~/.local
     mv ~/.local/nvim-linux-x86_64 ~/.local/nvim
 
     echo 'set -x PATH $HOME/.local/nvim/bin $PATH' >>~/.config/fish/config.fish
