@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e  # Exit immediately if a command exits with a non-zero status.
+set -e # Exit immediately if a command exits with a non-zero status.
 
 sudo apt-get update
 sudo apt install -y build-essential
@@ -43,20 +43,20 @@ install_homebrew() {
     read answer
   fi
   case $answer in
-    yes)
-      echo "Installing Homebrew..."
-      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-      echo >> "$HOME/.bashrc"
-      echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> "$HOME/.bashrc"
-      eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-      source "$HOME/.bashrc"
-      ;;
-    no)
-      echo "Skipping Homebrew installation."
-      ;;
-    *)
-      echo "Invalid response. Skipping Homebrew installation."
-      ;;
+  yes)
+    echo "Installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    echo >>"$HOME/.bashrc"
+    echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >>"$HOME/.bashrc"
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    source "$HOME/.bashrc"
+    ;;
+  no)
+    echo "Skipping Homebrew installation."
+    ;;
+  *)
+    echo "Invalid response. Skipping Homebrew installation."
+    ;;
   esac
 }
 
@@ -149,12 +149,12 @@ install_pyenv() {
 
     # Ensure Fish configuration directory exists before writing to config.fish
     mkdir -p "$HOME/.config/fish"
-    
-    echo 'set -x PYENV_ROOT $HOME/.pyenv' >> ~/.config/fish/config.fish
-    echo 'set -x PATH $PYENV_ROOT/bin $PATH' >> ~/.config/fish/config.fish
-    echo 'status --is-interactive; and pyenv init --path | source' >> ~/.config/fish/config.fish
-    echo 'status --is-interactive; and pyenv init - | source' >> ~/.config/fish/config.fish
-    echo 'status --is-interactive; and pyenv virtualenv-init - | source' >> ~/.config/fish/config.fish
+
+    echo 'set -x PYENV_ROOT $HOME/.pyenv' >>~/.config/fish/config.fish
+    echo 'set -x PATH $PYENV_ROOT/bin $PATH' >>~/.config/fish/config.fish
+    echo 'status --is-interactive; and pyenv init --path | source' >>~/.config/fish/config.fish
+    echo 'status --is-interactive; and pyenv init - | source' >>~/.config/fish/config.fish
+    echo 'status --is-interactive; and pyenv virtualenv-init - | source' >>~/.config/fish/config.fish
   else
     echo "Skipping pyenv installation."
   fi
@@ -170,10 +170,21 @@ install_neovim() {
   fi
   if [ "$response" = "y" ]; then
     echo "Installing Neovim..."
-    if [ "$(uname)" = "Linux" ]; then
-      sudo apt install -y neovim
-    elif [ "$(uname)" = "Darwin" ]; then
-      brew install neovim
+    mkdir -p ~/.local
+    curl -L https://github.com/neovim/neovim/releases/download/nightly/nvim-linux-x86_64.tar.gz -o /tmp/nvim-nightly.tar.gz
+
+    tar -xzvf nvim-linux-x86_64.tar.gz -C ~/.local
+    mv ~/.local/nvim-linux-x86_64 ~/.local/nvim
+
+    echo 'set -x PATH $HOME/.local/nvim/bin $PATH' >>~/.config/fish/config.fish
+    echo 'export PATH="$HOME/.local/nvim/bin:$PATH"' >>~/.bashrc
+
+    if command -v nvim >/dev/null 2>&1; then
+      echo "Neovim nightly installed successfully!"
+      nvim --version
+    else
+      echo "Neovim installation failed."
+      exit 1
     fi
   else
     echo "Skipping Neovim installation."
@@ -190,10 +201,10 @@ install_minikube() {
   if [ "$response" = "y" ]; then
     echo "Installing minikube..."
     curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
-    sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64    
+    sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
   else
     echo "Skipping minikube installation."
-  fi 
+  fi
 }
 
 # Prompt to install Homebrew
