@@ -209,6 +209,20 @@ install_minikube() {
   fi
 }
 
+set_up_fish() {
+  echo "Do you want to use fish as main terminal? (y/n)"
+  if [ "$AUTO_ACCEPT" = "yes" ]; then
+    response="y"
+  else
+    read -r response
+  fi
+  if [ "$response" = "y" ]; then
+    chsh -s $(which fish)
+  else
+    echo "Skipping using fish as main terminal"
+  fi
+}
+
 # Prompt to install Homebrew
 install_homebrew
 
@@ -224,5 +238,7 @@ install_neovim
 install_omf # keep this one at the end because otherwise will stop the script execution
 
 install_minikube
+
+set_up_fish
 
 echo "Setup complete! Make sure to set Fish as your default shell if desired."
