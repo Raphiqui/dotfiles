@@ -193,6 +193,22 @@ install_neovim() {
   fi
 }
 
+install_lazy_vim() {
+  echo "Do you want to install lazy-vim? (y/n)"
+  if [ "$AUTO_ACCEPT" = "yes" ]; then
+    response="y"
+  else
+    read -r response
+  fi
+  if [ "$response" = "y" ]; then
+    echo "Installing lazy-vim..."
+    git clone https://github.com/LazyVim/starter ~/.config/nvim
+    rm -rf ~/.config/nvim/.git
+  else
+    echo "Skipping lazy-vim installation."
+  fi
+}
+
 install_minikube() {
   echo "Do you want to install minikube? (y/n)"
   if [ "$AUTO_ACCEPT" = "yes" ]; then
@@ -235,6 +251,7 @@ setup_local_config
 install_fish
 install_pyenv # pyenv comes first because fish and omf are configured with it
 install_neovim
+install_lazy_vim
 install_omf # keep this one at the end because otherwise will stop the script execution
 
 install_minikube
