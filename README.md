@@ -16,9 +16,12 @@ Install docker desktop
 
 ### Clean path
 
-The PATH variable can get messy because WSL wll import a bunch of /mnt/... so if you don't want that and have a clean linux PATH you can update this file
+The PATH variable can get messy because WSL will import a bunch of `/mnt/...` files.
+To have a clean linux PATH you can update this file
 
-```/etc/wsl.conf
+```
+# /etc/wsl.conf
+
 [interop]
 enabled = true
 appendWindowsPath = false
