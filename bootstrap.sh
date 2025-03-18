@@ -4,6 +4,12 @@ set -e  # Exit on error
 
 echo "🛠️  Starting system setup..."
 
+sudo tee /etc/wsl.conf > /dev/null << EOF
+[interop]
+enabled = true
+appendWindowsPath = false
+EOF
+
 # ------------------------------------------
 # Step 1: Update & Install essential packages
 # ------------------------------------------
