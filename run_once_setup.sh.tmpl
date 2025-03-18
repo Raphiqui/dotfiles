@@ -19,12 +19,6 @@ else
   echo "✅ Fish is already installed."
 fi
 
-# Oh My Fish
-if [ ! -d "$HOME/.local/share/omf" ]; then
-  echo "🔧 Installing Oh My Fish..."
-  curl -L https://get.oh-my.fish | fish
-fi
-
 # Fisher and Plugins
 fish -c "curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher"
 fish -c "fisher install jorgebucaran/nvm.fish jethrokuan/z"
@@ -65,4 +59,10 @@ if ! command -v nvim &> /dev/null; then
   echo "✅ Neovim installed to ~/.local/nvim"
 else
   echo "✅ Neovim already installed!"
+fi
+
+# Oh My Fish
+if [ ! -d "$HOME/.local/share/omf" ]; then
+  echo "🔧 Installing Oh My Fish..."
+  curl -L https://get.oh-my.fish | fish
 fi
