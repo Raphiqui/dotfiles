@@ -1,261 +1,85 @@
 #!/bin/bash
 
-set -e # Exit immediately if a command exits with a non-zero status.
+set -e  # Exit on error
 
-sudo apt-get update
-sudo apt install -y build-essential
+echo "🛠️  Starting system setup..."
 
-# Detect if running in CI/CD (GitHub Actions sets this environment variable)
-if [ -n "$CI" ]; then
-  echo "Running in CI/CD mode: Auto-accepting all prompts and skipping GitHub linking."
-  AUTO_ACCEPT="yes"
+# ------------------------------------------
+# Step 1: Update & Install essential packages
+# ------------------------------------------
+echo "🔄 Updating package lists..."
+sudo apt-get update -y
+
+echo "🔧 Installing build-essential..."
+sudo apt-get install -y build-essential curl file git
+
+# ------------------------------------------
+# Step 2: Create SSH Key for GitHub (if missing)
+# ------------------------------------------
+if [ ! -f "$HOME/.ssh/id_ed25519.pub" ]; then
+  echo "🔑 Creating a new GitHub SSH key..."
+  echo -n "Enter your GitHub email: "
+  read email
+  ssh-keygen -t ed25519 -C "$email"
+
+  echo "🚀 SSH public key created! Add it to your GitHub account:"
+  echo "----------------------------------------------------------"
+  cat "$HOME/.ssh/id_ed25519.pub"
+  echo "----------------------------------------------------------"
+  echo "🔗 Open GitHub -> Settings -> SSH and GPG keys -> New SSH key"
+  read -p "Press enter after you've added your key to GitHub..."
 else
-  AUTO_ACCEPT="no"
+  echo "✅ SSH key already exists! Skipping..."
 fi
 
-configure_git() {
-  # Basically to avoid avoing issues when pushing for the first time from a fresh install
-  echo "Do you want to configure git? (y/n)"
-  if [ "$AUTO_ACCEPT" = "yes" ]; then
-    echo "Skipping GitHub setup in CI/CD environment."
-    return
-  fi
-  read answer
-  if [ "$answer" = "y" ]; then
-    echo "Configuring git..."
-    echo "Enter your email"
-    read email
-    git config --global user.email "$email"
-    echo "Enter your name"
-    read name
-    git config --global user.name "$name"
-  else
-    echo "Skipping git configuration."
-  fi
-}
+# ------------------------------------------
+# Step 3: Install Homebrew (if not installed)
+# ------------------------------------------
+if ! command -v brew &> /dev/null; then
+  echo "🍺 Installing Homebrew..."
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+else
+  echo "✅ Homebrew already installed!"
+fi
 
-# Function to install Homebrew
-install_homebrew() {
-  echo "Do you want to install Homebrew? (yes/no)"
-  if [ "$AUTO_ACCEPT" = "yes" ]; then
-    answer="yes"
-  else
-    read answer
-  fi
-  case $answer in
-  yes)
-    echo "Installing Homebrew..."
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    echo >>"$HOME/.bashrc"
-    echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >>"$HOME/.bashrc"
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    source "$HOME/.bashrc"
-    ;;
-  no)
-    echo "Skipping Homebrew installation."
-    ;;
-  *)
-    echo "Invalid response. Skipping Homebrew installation."
-    ;;
-  esac
-}
+echo "🩺 Running brew doctor..."
+brew doctor || true
 
-# Function to install chezmoi
-install_chezmoi() {
-  echo "Do you want to install chezmoi? (y/n)"
-  if [ "$AUTO_ACCEPT" = "yes" ]; then
-    response="y"
-  else
-    read -r response
-  fi
-  if [ "$response" = "y" ]; then
-    echo "Installing chezmoi..."
-    brew install chezmoi
-  else
-    echo "Skipping chezmoi installation."
-  fi
-}
+# ------------------------------------------
+# Step 4: Install Chezmoi (if not installed)
+# ------------------------------------------
+if ! command -v chezmoi &> /dev/null; then
+  echo "📦 Installing chezmoi..."
+  brew install chezmoi
+else
+  echo "✅ chezmoi already installed!"
+fi
 
-# Function to set up local configuration with chezmoi
-setup_local_config() {
-  if [ "$AUTO_ACCEPT" = "yes" ]; then
-    echo "Skipping GitHub setup in CI/CD environment."
-    return
-  fi
-  echo "Do you want to set up local configuration with chezmoi? (y/n)"
-  read -r response
-  if [ "$response" = "y" ]; then
-    echo "Please enter your GitHub username:"
-    read -r GITHUB_USERNAME
-    if [ -z "$GITHUB_USERNAME" ]; then
-      echo "GitHub username cannot be empty. Exiting."
-      exit 1
-    fi
-    chezmoi init --apply git@github.com:"$GITHUB_USERNAME"/dotfiles.git
-  else
-    echo "Skipping local configuration setup."
-  fi
-}
+echo "📝 Chezmoi version:"
+chezmoi --version
 
-# Function to install Fish Shell
-install_fish() {
-  echo "Do you want to install Fish Shell? (y/n)"
-  if [ "$AUTO_ACCEPT" = "yes" ]; then
-    response="y"
-  else
-    read -r response
-  fi
-  if [ "$response" = "y" ]; then
-    echo "Installing Fish Shell..."
-    if [ "$(uname)" = "Linux" ]; then
-      sudo apt-add-repository ppa:fish-shell/release-3 -y
-      sudo apt update
-      sudo apt install -y fish
-    elif [ "$(uname)" = "Darwin" ]; then
-      brew install fish
-    fi
-  else
-    echo "Skipping Fish Shell installation."
-  fi
-}
+# ------------------------------------------
+# Step 5: Git Global Configuration
+# ------------------------------------------
+echo -n "Enter your GitHub email for Git config: "
+read email
+git config --global user.email "$email"
 
-# Function to install Oh My Fish (OMF)
-install_omf() {
-  if [ "$AUTO_ACCEPT" = "yes" ]; then
-    echo "Skipping GitHub setup in CI/CD environment."
-    return
-  fi
-  echo "Do you want to install Oh My Fish (OMF)? (y/n)"
-  read -r response
-  if [ "$response" = "y" ]; then
-    echo "Installing Oh My Fish (OMF)..."
-    curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
-  else
-    echo "Skipping Oh My Fish (OMF) installation."
-  fi
-}
+echo -n "Enter your GitHub name for Git config: "
+read name
+git config --global user.name "$name"
 
-# Function to install pyenv
-install_pyenv() {
-  echo "Do you want to install pyenv? (y/n)"
-  if [ "$AUTO_ACCEPT" = "yes" ]; then
-    response="y"
-  else
-    read -r response
-  fi
-  if [ "$response" = "y" ]; then
-    echo "Installing pyenv..."
-    curl https://pyenv.run | bash
+echo "✅ Git config updated:"
+git config --global --list
 
-    # Ensure Fish configuration directory exists before writing to config.fish
-    mkdir -p "$HOME/.config/fish"
+# ------------------------------------------
+# Step 6: Chezmoi Init & Apply Dotfiles
+# ------------------------------------------
+echo -n "Enter your GitHub username (e.g., Raphiqui): "
+read -r GITHUB_USERNAME
 
-    echo 'set -x PYENV_ROOT $HOME/.pyenv' >>~/.config/fish/config.fish
-    echo 'set -x PATH $PYENV_ROOT/bin $PATH' >>~/.config/fish/config.fish
-    echo 'status --is-interactive; and pyenv init --path | source' >>~/.config/fish/config.fish
-    echo 'status --is-interactive; and pyenv init - | source' >>~/.config/fish/config.fish
-    echo 'status --is-interactive; and pyenv virtualenv-init - | source' >>~/.config/fish/config.fish
-  else
-    echo "Skipping pyenv installation."
-  fi
-}
+echo "🚀 Initializing chezmoi with your dotfiles repo..."
+chezmoi init --apply git@github.com:"$GITHUB_USERNAME"/dotfiles.git
 
-# Function to install Neovim
-install_neovim() {
-  echo "Do you want to install Neovim? (y/n)"
-  if [ "$AUTO_ACCEPT" = "yes" ]; then
-    response="y"
-  else
-    read -r response
-  fi
-  if [ "$response" = "y" ]; then
-    echo "Installing Neovim..."
-    mkdir -p ~/.local
-    curl -L https://github.com/neovim/neovim/releases/download/nightly/nvim-linux-x86_64.tar.gz -o /tmp/nvim-nightly.tar.gz
+echo "🎉 Setup complete!"
 
-    tar -xzvf /tmp/nvim-nightly.tar.gz -C ~/.local
-    mv ~/.local/nvim-linux-x86_64 ~/.local/nvim
-
-    export PATH="$HOME/.local/nvim/bin:$PATH"
-
-    echo 'set -x PATH $HOME/.local/nvim/bin $PATH' >>~/.config/fish/config.fish
-    echo 'export PATH="$HOME/.local/nvim/bin:$PATH"' >>~/.bashrc
-
-    if command -v nvim >/dev/null 2>&1; then
-      echo "Neovim nightly installed successfully!"
-      nvim --version
-    else
-      echo "Neovim installation failed."
-      exit 1
-    fi
-  else
-    echo "Skipping Neovim installation."
-  fi
-}
-
-install_lazy_vim() {
-  echo "Do you want to install lazy-vim? (y/n)"
-  if [ "$AUTO_ACCEPT" = "yes" ]; then
-    response="y"
-  else
-    read -r response
-  fi
-  if [ "$response" = "y" ]; then
-    echo "Installing lazy-vim..."
-    git clone https://github.com/LazyVim/starter ~/.config/nvim
-    rm -rf ~/.config/nvim/.git
-  else
-    echo "Skipping lazy-vim installation."
-  fi
-}
-
-install_minikube() {
-  echo "Do you want to install minikube? (y/n)"
-  if [ "$AUTO_ACCEPT" = "yes" ]; then
-    response="y"
-  else
-    read -r response
-  fi
-  if [ "$response" = "y" ]; then
-    echo "Installing minikube..."
-    curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
-    sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
-  else
-    echo "Skipping minikube installation."
-  fi
-}
-
-set_up_fish() {
-  echo "Do you want to use fish as main terminal? (y/n)"
-  if [ "$AUTO_ACCEPT" = "yes" ]; then
-    response="y"
-  else
-    read -r response
-  fi
-  if [ "$response" = "y" ]; then
-    chsh -s $(which fish)
-  else
-    echo "Skipping using fish as main terminal"
-  fi
-}
-
-# Prompt to install Homebrew
-install_homebrew
-
-configure_git
-# Install chezmoi and set up local configuration
-install_chezmoi
-setup_local_config
-
-# Install remaining dependencies
-install_fish
-install_pyenv # pyenv comes first because fish and omf are configured with it
-install_neovim
-install_lazy_vim
-install_omf # keep this one at the end because otherwise will stop the script execution
-
-install_minikube
-
-set_up_fish
-
-echo "Setup complete! Make sure to set Fish as your default shell if desired."
