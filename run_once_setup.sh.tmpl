@@ -40,5 +40,29 @@ if [ ! -d "$HOME/.pyenv" ]; then
   curl https://pyenv.run | bash
 fi
 
+# Neovim: LazyVim setup
+if [ ! -d "$HOME/.config/nvim" ]; then
+  echo "🚀 Installing LazyVim..."
+  git clone https://github.com/LazyVim/starter ~/.config/nvim
+  rm -rf ~/.config/nvim/.git
+else
+  echo "✅ Neovim config already exists at ~/.config/nvim"
+fi
+
 echo "✅ One-time setup complete!"
 
+# Check if Neovim is installed already
+if ! command -v nvim &> /dev/null; then
+  echo "🔧 Installing Neovim Nightly..."
+
+  # Download Neovim Nightly release
+  curl -L https://github.com/neovim/neovim/releases/download/nightly/nvim-linux-x86_64.tar.gz -o /tmp/nvim-nightly.tar.gz
+
+  # Extract and move to ~/.local
+  tar -xzvf /tmp/nvim-nightly.tar.gz -C ~/.local
+  mv ~/.local/nvim-linux-x86_64 ~/.local/nvim
+
+  echo "✅ Neovim installed to ~/.local/nvim"
+else
+  echo "✅ Neovim already installed!"
+fi
