@@ -2,6 +2,12 @@
 
 echo "🏗️ Running one-time setup via chezmoi!"
 
+# Install pyenv
+if [ ! -d "$HOME/.pyenv" ]; then
+  echo "🔧 Installing pyenv..."
+  curl https://pyenv.run | bash
+fi
+
 # 🐟 Install Fish if it's not already installed
 if ! command -v fish &> /dev/null; then
   echo "🔧 Installing Fish..."
@@ -32,12 +38,6 @@ if ! command -v minikube &> /dev/null; then
 
   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
   sudo install minikube-linux-amd64 /usr/local/bin/minikube
-fi
-
-# Install pyenv
-if [ ! -d "$HOME/.pyenv" ]; then
-  echo "🔧 Installing pyenv..."
-  curl https://pyenv.run | bash
 fi
 
 # Neovim: LazyVim setup
