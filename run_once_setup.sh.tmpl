@@ -34,5 +34,11 @@ if ! command -v minikube &> /dev/null; then
   sudo install minikube-linux-amd64 /usr/local/bin/minikube
 fi
 
+# Install pyenv
+if [ ! -d "$HOME/.pyenv" ]; then
+  echo "🔧 Installing pyenv..."
+  curl https://pyenv.run | bash
+fi
+
 echo "✅ One-time setup complete!"
 
