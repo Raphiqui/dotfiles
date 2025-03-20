@@ -4,9 +4,11 @@ Basically a no effort setup.
 
 ## Structure 
 
- - A setup.sh file which aims to be run fisrt, this will install everything that `chezmoi` doesn't
+ - Folder containing all the configurations handled by `chezmoi`
 
- - dot_config folder which is handled by chezmoi and applies a bunch of already written configurations
+ - bootstrap.sh file which aims to be run before anything else, this will install everything that `chezmoi` doesn't
+
+ - run_once_*.sh script which will run right after executing `chezmoi --apply`
 
 ## WSL
 
