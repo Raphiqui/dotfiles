@@ -39,6 +39,19 @@ if [ ! -d "$HOME/.config/nvim" ]; then
   echo "🚀 Installing LazyVim..."
   git clone https://github.com/LazyVim/starter ~/.config/nvim
   rm -rf ~/.config/nvim/.git
+
+  echo "🔧 Installing what LazyVim might missed..."
+  sudo apt update
+  sudo apt install -y luarocks
+
+  sudo apt install -y ripgrep
+  
+  sudo apt install -y fd-find
+  ln -s $(which fdfind) ~/.local/bin/fd
+
+  brew install lazygit
+
+  brew install fzf
 else
   echo "✅ Neovim config already exists at ~/.config/nvim"
 fi
