@@ -21,6 +21,7 @@ return {
           "json",
         },
       }),
+      null_ls.builtins.formatting.black,
     })
   end,
 }
