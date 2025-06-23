@@ -1,6 +1,6 @@
 # dotfiles
 
-Basically a no effort setup.
+No effort setup.
 
 ## Structure 
 
