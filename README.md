@@ -28,9 +28,10 @@ To have a clean linux PATH you can update this file
 enabled = true
 appendWindowsPath = false
 
+```
+
 ### Backup
 
 Backup file creates a snapshot of the specified distro.
 This is so far only Windows oriented.
 See how to run a cron to set it up properly.
-```
