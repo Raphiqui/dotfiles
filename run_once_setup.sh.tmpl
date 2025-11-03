@@ -62,22 +62,6 @@ fi
 
 echo "✅ One-time setup complete!"
 
-# Check if Neovim is installed already
-if ! command -v nvim &> /dev/null; then
-  echo "🔧 Installing Neovim Nightly..."
-
-  # Download Neovim Nightly release
-  curl -L https://github.com/neovim/neovim/releases/download/nightly/nvim-linux-x86_64.tar.gz -o /tmp/nvim-nightly.tar.gz
-
-  # Extract and move to ~/.local
-  tar -xzvf /tmp/nvim-nightly.tar.gz -C ~/.local
-  mv ~/.local/nvim-linux-x86_64 ~/.local/nvim
-
-  echo "✅ Neovim installed to ~/.local/nvim"
-else
-  echo "✅ Neovim already installed!"
-fi
-
 # Oh My Fish
 if [ ! -d "$HOME/.local/share/omf" ]; then
   echo "🔧 Installing Oh My Fish..."
