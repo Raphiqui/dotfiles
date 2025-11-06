@@ -1,8 +1,16 @@
 #!/bin/bash
 
-set -e  # Exit on error
+set -e # Exit on error
 
 echo "🛠️  Starting system setup..."
+
+if ! command -v gum &>/dev/null; then
+  # Add gum to do beautiful scrips
+  sudo mkdir -p /etc/apt/keyrings
+  curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg
+  echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list
+  sudo apt update && sudo apt install -y gum
+fi
 
 # ------------------------------------------
 # Step 1: Update & Install essential packages
@@ -29,13 +37,13 @@ if [ ! -f "$HOME/.ssh/id_ed25519.pub" ]; then
   echo "🔗 Open GitHub -> Settings -> SSH and GPG keys -> New SSH key"
   read -p "Press enter after you've added your key to GitHub..."
 else
-  echo "✅ SSH key already exists! Skipping..."
+  gum style --foreground 42 "✅ SSH key already exists! Skipping..."
 fi
 
 # ------------------------------------------
 # Step 3: Install Homebrew (if not installed)
 # ------------------------------------------
-if ! command -v brew &> /dev/null; then
+if ! command -v brew &>/dev/null; then
   echo "🍺 Installing Homebrew..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   # Load Homebrew into the current session
@@ -50,7 +58,7 @@ brew doctor || true
 # ------------------------------------------
 # Step 4: Install Chezmoi (if not installed)
 # ------------------------------------------
-if ! command -v chezmoi &> /dev/null; then
+if ! command -v chezmoi &>/dev/null; then
   echo "📦 Installing chezmoi..."
   brew install chezmoi
 else
@@ -84,4 +92,3 @@ echo "🚀 Initializing chezmoi with your dotfiles repo..."
 chezmoi init --apply git@github.com:"$GITHUB_USERNAME"/dotfiles.git
 
 echo "🎉 Setup complete!"
-
