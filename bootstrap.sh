@@ -47,6 +47,8 @@ fi
 echo "🩺 Running brew doctor..."
 brew doctor || true
 
+brew install neovim
+
 # ------------------------------------------
 # Step 4: Install Chezmoi (if not installed)
 # ------------------------------------------
