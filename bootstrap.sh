@@ -40,6 +40,14 @@ if ! command -v brew &>/dev/null; then
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   # Load Homebrew into the current session
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+  echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> "$HOME/.bashrc"
+
+  # Load Homebrew into the current session
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+  # Install GCC as recommended
+  echo "🔧 Installing GCC..."
+  brew install gcc
 else
   echo "✅ Homebrew already installed!"
 fi
