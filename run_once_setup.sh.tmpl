@@ -21,6 +21,10 @@ else
   echo "✅ Fish is already installed."
 fi
 
+rm -rf ~/.config/fish/functions/*
+rm -rf ~/.config/fish/completions/*
+rm -rf ~/.config/fish/conf.d/*
+
 # Fisher and Plugins
 fish -c "curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher"
 fish -c "fisher install jorgebucaran/nvm.fish jethrokuan/z"
