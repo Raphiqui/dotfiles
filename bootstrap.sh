@@ -29,7 +29,7 @@ if [ ! -f "$HOME/.ssh/id_ed25519.pub" ]; then
   echo "🔗 Open GitHub -> Settings -> SSH and GPG keys -> New SSH key"
   read -p "Press enter after you've added your key to GitHub..."
 else
-  gum style --foreground 42 "✅ SSH key already exists! Skipping..."
+  echo "✅ SSH key already exists! Skipping..."
 fi
 
 # ------------------------------------------
