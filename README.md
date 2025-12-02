@@ -42,3 +42,7 @@ appendWindowsPath = false
 Backup file creates a snapshot of the specified distro.
 This is so far only Windows oriented.
 See how to run a cron to set it up properly.
+
+### TODO
+
+Fix the setup when username is dynamic.
