@@ -23,6 +23,9 @@ rm -rf ~/.config/fish/functions/*
 rm -rf ~/.config/fish/completions/*
 rm -rf ~/.config/fish/conf.d/*
 
+# Add brew to make it available for fish
+echo 'eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >> ~/.config/fish/config.fish
+
 # Fisher and Plugins
 fish -c "curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher"
 fish -c "fisher install jorgebucaran/nvm.fish jethrokuan/z"
