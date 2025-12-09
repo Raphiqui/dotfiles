@@ -40,14 +40,18 @@ if test -d ~/.pyenv
 end
 EOF
 
-# Add brew to make it available for fish
-echo 'eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >> ~/.config/fish/config.fish
+# Install Oh My Fish
+if [ ! -d "$HOME/.local/share/omf" ]; then
+  echo "🔧 Installing Oh My Fish..."
+  curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
+fi
 
-# Fisher and Plugins
-fish -c "curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher"
-fish -c "fisher install jorgebucaran/nvm.fish jethrokuan/z"
+# Install OMF plugins
+echo "🔧 Installing OMF plugins..."
+fish -c "omf install z"
+fish -c "omf install nvm"
 
-# Node.js via nvm.fish
+# Node.js via nvm
 fish -c "nvm install lts"
 
 # Install Minikube
