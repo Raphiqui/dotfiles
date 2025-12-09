@@ -24,6 +24,22 @@ rm -rf ~/.config/fish/functions/*
 rm -rf ~/.config/fish/completions/*
 rm -rf ~/.config/fish/conf.d/*
 
+# Create Fish config
+mkdir -p ~/.config/fish
+cat > ~/.config/fish/config.fish << 'EOF'
+# Homebrew
+if test -d /home/linuxbrew/.linuxbrew
+  eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+end
+
+# pyenv
+if test -d ~/.pyenv
+  set -gx PYENV_ROOT $HOME/.pyenv
+  set -gx PATH $PYENV_ROOT/bin $PATH
+  pyenv init - | source
+end
+EOF
+
 # Add brew to make it available for fish
 echo 'eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >> ~/.config/fish/config.fish
 
