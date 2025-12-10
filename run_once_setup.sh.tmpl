@@ -40,10 +40,11 @@ if test -d ~/.pyenv
 end
 EOF
 
-# Install Oh My Fish
 if [ ! -d "$HOME/.local/share/omf" ]; then
-  echo "🔧 Installing Oh My Fish..."
-  curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
+  echo "🔧 Installing Oh My Fish (non-interactive)..." #  prevent OMF from launching an interactive shell
+  curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install > /tmp/omf-install
+  fish /tmp/omf-install --noninteractive --yes
+  rm /tmp/omf-install
 fi
 
 # Install OMF plugins
