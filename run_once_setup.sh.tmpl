@@ -51,11 +51,6 @@ fi
 echo "🔧 Installing OMF plugins..."
 fish -c "omf install z"
 
-brew install nvm
-
-# Node.js via nvm
-fish -c "nvm install lts"
-
 # Install Minikube
 if ! command -v minikube &> /dev/null; then
   echo "🔧 Installing Minikube..."
