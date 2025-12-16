@@ -59,30 +59,16 @@ if ! command -v minikube &> /dev/null; then
   sudo install minikube-linux-amd64 /usr/local/bin/minikube
 fi
 
-# Neovim: LazyVim setup
-if [ ! -d "$HOME/.config/nvim" ]; then
-  echo "🚀 Installing LazyVim..."
-  git clone https://github.com/LazyVim/starter ~/.config/nvim
-  rm -rf ~/.config/nvim/.git
+# Install LazyVim dependencies BEFORE setting up config
+echo "🔧 Installing LazyVim dependencies..."
+sudo apt update
+sudo apt install -y luarocks ripgrep fd-find xclip
 
-  echo "🔧 Installing what LazyVim might missed..."
-  sudo apt update
-  sudo apt install -y luarocks
+mkdir -p ~/.local/bin
+ln -sf $(which fdfind) ~/.local/bin/fd
 
-  sudo apt install -y ripgrep
-  
-  sudo apt install -y fd-find
-  ln -s $(which fdfind) ~/.local/bin/fd
+brew install lazygit lazydocker fzf
 
-  sudo apt install xclip
-
-  brew install lazygit
-
-  brew install lazydocker
-
-  brew install fzf
-else
-  echo "✅ LazyVim config already exists at ~/.config/nvim"
-fi
+mkdir -p ~/.config/nvim
 
 echo "✅ One-time setup complete!"
