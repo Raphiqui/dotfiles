@@ -90,9 +90,6 @@ git config --global --list
 echo -n "Enter your GitHub username (e.g., Raphiqui): "
 read -r GITHUB_USERNAME
 
-echo "🚀 Initializing chezmoi with your dotfiles repo..."
-chezmoi init --apply git@github.com:"$GITHUB_USERNAME"/dotfiles.git
-
 # Fonts download
 mkdir -p ~/.local/share/fonts
 cd ~/.local/share/fonts
@@ -106,5 +103,8 @@ git clone https://gitlab.com/phoneybadger/pokemon-colorscripts.git
 cd pokemon-colorscripts
 sudo ./install.sh
 rm -rf pokemon-colorscripts
+
+chezmoi init --apply git@github.com:"$GITHUB_USERNAME"/dotfiles.git
+echo "🚀 Initializing chezmoi with your dotfiles repo..."
 
 echo "🎉 Setup complete!"
