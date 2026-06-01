@@ -6,7 +6,7 @@ No effort setup.
 
 First, copy the file named `bootstrap.sh` where you like, probably under `/home/<username>/code/`.
 Then give it the right permission,
-chmod +× ./bootstrap.sh
+chmod +x ./bootstrap.sh
 After that execute the file and that will be it 😀😃🙂.
 
 ## Structure 
