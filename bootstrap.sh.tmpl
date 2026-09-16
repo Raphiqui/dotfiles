@@ -4,14 +4,25 @@ set -e # Exit on error
 
 echo "🛠️  Starting system setup..."
 
+{{- if eq .chezmoi.os "darwin" }}
+BREW_PATH="{{ if eq .chezmoi.arch "arm64" }}/opt/homebrew{{ else }}/usr/local{{ end }}/bin/brew"
+{{- else }}
+BREW_PATH="/home/linuxbrew/.linuxbrew/bin/brew"
+{{- end }}
+
 # ------------------------------------------
 # Step 1: Update & Install essential packages
 # ------------------------------------------
+{{- if eq .chezmoi.os "darwin" }}
+echo "🔧 Installing Xcode Command Line Tools (if needed)..."
+xcode-select --install 2>/dev/null || echo "✅ Command Line Tools already installed!"
+{{- else }}
 echo "🔄 Updating package lists..."
 sudo apt-get update -y
 
 echo "🔧 Installing build-essential..."
 sudo apt-get install -y build-essential curl file git
+{{- end }}
 
 # ------------------------------------------
 # Step 2: Create SSH Key for GitHub (if missing)
@@ -39,15 +50,14 @@ if ! command -v brew &>/dev/null; then
   echo "🍺 Installing Homebrew..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   # Load Homebrew into the current session
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-  echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >>"$HOME/.bashrc"
+  eval "$("$BREW_PATH" shellenv)"
+  echo "eval \"\$($BREW_PATH shellenv)\"" >>"$HOME/.bashrc"
 
-  # Load Homebrew into the current session
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-
-  # Install GCC as recommended
+{{- if eq .chezmoi.os "linux" }}
+  # Install GCC as recommended (Linuxbrew has no bundled compiler)
   echo "🔧 Installing GCC..."
   brew install gcc
+{{- end }}
 else
   echo "✅ Homebrew already installed!"
 fi
@@ -91,17 +101,25 @@ echo -n "Enter your GitHub username (e.g., Raphiqui): "
 read -r GITHUB_USERNAME
 
 # Fonts download
-mkdir -p ~/.local/share/fonts
-cd ~/.local/share/fonts
-wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip
-unzip JetBrainsMono.zip
+{{- if eq .chezmoi.os "darwin" }}
+FONT_DIR="$HOME/Library/Fonts"
+{{- else }}
+FONT_DIR="$HOME/.local/share/fonts"
+{{- end }}
+mkdir -p "$FONT_DIR"
+cd "$FONT_DIR"
+curl -fsSL -o JetBrainsMono.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip
+unzip -o JetBrainsMono.zip
 rm JetBrainsMono.zip
+{{- if eq .chezmoi.os "linux" }}
 fc-cache -fv
+{{- end }}
 
 # Pokemons
 git clone https://gitlab.com/phoneybadger/pokemon-colorscripts.git
 cd pokemon-colorscripts
 sudo ./install.sh
+cd ..
 rm -rf pokemon-colorscripts
 
 chezmoi init --apply git@github.com:"$GITHUB_USERNAME"/dotfiles.git

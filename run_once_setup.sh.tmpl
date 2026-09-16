@@ -3,6 +3,12 @@ set -e
 
 echo "🏗️ Running one-time setup via chezmoi!"
 
+{{- if eq .chezmoi.os "darwin" }}
+BREW_PATH="{{ if eq .chezmoi.arch "arm64" }}/opt/homebrew{{ else }}/usr/local{{ end }}/bin/brew"
+{{- else }}
+BREW_PATH="/home/linuxbrew/.linuxbrew/bin/brew"
+{{- end }}
+
 # Install pyenv
 if [ ! -d "$HOME/.pyenv" ]; then
   echo "🔧 Installing pyenv..."
@@ -13,8 +19,12 @@ fi
 if ! command -v fish &> /dev/null; then
   echo "🔧 Installing Fish..."
 
+{{- if eq .chezmoi.os "darwin" }}
+  brew install fish
+{{- else }}
   sudo apt-get update
   sudo apt-get install -y fish
+{{- end }}
   chsh -s $(which fish)
 else
   echo "✅ Fish is already installed."
@@ -26,16 +36,16 @@ rm -rf ~/.config/fish/conf.d/*
 
 # Create Fish config
 mkdir -p ~/.config/fish
-cat > ~/.config/fish/config.fish << 'EOF'
+cat > ~/.config/fish/config.fish << EOF
 # Homebrew
-if test -d /home/linuxbrew/.linuxbrew
-  eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+if test -x $BREW_PATH
+  eval ($BREW_PATH shellenv)
 end
 
 # pyenv
 if test -d ~/.pyenv
-  set -gx PYENV_ROOT $HOME/.pyenv
-  set -gx PATH $PYENV_ROOT/bin $PATH
+  set -gx PYENV_ROOT \$HOME/.pyenv
+  set -gx PATH \$PYENV_ROOT/bin \$PATH
   pyenv init - | source
 end
 EOF
@@ -50,6 +60,26 @@ fi
 # Install OMF plugins
 echo "🔧 Installing OMF plugins..."
 fish -c "omf install z"
+
+{{- if eq .chezmoi.os "darwin" }}
+
+# Install Minikube
+if ! command -v minikube &> /dev/null; then
+  echo "🔧 Installing Minikube..."
+  brew install minikube
+fi
+
+# Install Docker
+if ! command -v docker &> /dev/null; then
+  echo "🔧 Installing Docker Desktop..."
+  brew install --cask docker
+  echo "ℹ️  Open Docker Desktop once from Applications to finish setup and start the daemon."
+fi
+
+# Install LazyVim dependencies BEFORE setting up config
+echo "🔧 Installing LazyVim dependencies..."
+brew install luarocks ripgrep fd
+{{- else }}
 
 # Install Minikube
 if ! command -v minikube &> /dev/null; then
@@ -68,14 +98,14 @@ if ! command -v docker &> /dev/null; then
   sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
   sudo chmod a+r /etc/apt/keyrings/docker.asc
 
-  sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
+  sudo tee /etc/apt/sources.list.d/docker.sources <<DOCKEREOF
 Types: deb
 URIs: https://download.docker.com/linux/ubuntu
 Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
 Components: stable
 Architectures: $(dpkg --print-architecture)
 Signed-By: /etc/apt/keyrings/docker.asc
-EOF
+DOCKEREOF
 
   sudo apt update
   sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
@@ -89,6 +119,7 @@ sudo apt install -y luarocks ripgrep fd-find xclip
 
 mkdir -p ~/.local/bin
 ln -sf $(which fdfind) ~/.local/bin/fd
+{{- end }}
 
 brew install lazygit lazydocker fzf mise
 
